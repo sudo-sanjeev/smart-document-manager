@@ -1,0 +1,233 @@
+.file-explorer {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.explorer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.explorer-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+  font-weight: 700;
+}
+
+.add-folder-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-folder-btn:hover {
+  background: #f3f4f6;
+  transform: scale(1.1);
+}
+
+.new-folder-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.new-folder-input input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.new-folder-input input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #5568d3;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+.explorer-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.root-folder,
+.folder-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: #374151;
+  font-weight: 500;
+}
+
+.root-folder:hover,
+.folder-header:hover {
+  background: #f3f4f6;
+}
+
+.root-folder.selected,
+.folder-header.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.folder-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: inherit;
+}
+
+.folder-name-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  flex: 1;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+
+.folder-item {
+  margin-bottom: 0.25rem;
+}
+
+.folder-content {
+  margin-left: 0.5rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.file-item:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.file-item.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.processing-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: #fbbf24;
+  color: #78350f;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.root-documents {
+  margin-top: 0.5rem;
+}
+
+/* Scrollbar styling */
+.explorer-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.explorer-content::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.explorer-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.explorer-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .file-explorer {
+    padding: 1rem;
+  }
+
+  .explorer-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .folder-header,
+  .file-item {
+    padding: 0.6rem 0.4rem;
+  }
+}
+
