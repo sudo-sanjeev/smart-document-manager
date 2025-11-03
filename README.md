@@ -10,7 +10,7 @@ Both frontend and backend are fully built and operational!
 
 ## 🎯 Quick Start
 
-### 1. Start the Backend
+### 1. Start the Backend service
 
 ```bash
 cd backend
