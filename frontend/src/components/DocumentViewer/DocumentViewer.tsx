@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Sparkles, Code } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useDocuments } from '../../hooks/useDocuments';
-import { documentAPI } from '../../services/api';
+import { documentAPI } from '../../service-integration/document-api';
 import './styles.css';
 
 type ViewTab = 'original' | 'summary' | 'markdown';

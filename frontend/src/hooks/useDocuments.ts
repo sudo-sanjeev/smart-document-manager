@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDocumentStore } from '../store/documentStore';
-import { documentAPI, folderAPI } from '../services/api';
+import { documentAPI } from '../service-integration/document-api';
+import { folderAPI } from '../service-integration/folder-api';
 
 export const useDocuments = () => {
   const {
