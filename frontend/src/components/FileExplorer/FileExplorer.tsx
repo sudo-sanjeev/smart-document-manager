@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Folder, File, ChevronRight, ChevronDown, FolderPlus } from 'lucide-react';
 import { useDocuments } from '../../hooks/useDocuments';
 import type { FolderType } from '../../types';
-import './FileExplorer.css';
+import './styles.css';
 
 export const FileExplorer = () => {
   const {

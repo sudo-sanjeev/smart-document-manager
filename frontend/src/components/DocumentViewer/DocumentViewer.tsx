@@ -3,7 +3,7 @@ import { FileText, Sparkles, Code } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useDocuments } from '../../hooks/useDocuments';
 import { documentAPI } from '../../services/api';
-import './DocumentViewer.css';
+import './styles.css';
 
 type ViewTab = 'original' | 'summary' | 'markdown';
 

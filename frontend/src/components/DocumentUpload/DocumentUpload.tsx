@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, File, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { useDocuments } from '../../hooks/useDocuments';
-import './DocumentUpload.css';
+import './styles.css';
 
 export const DocumentUpload = () => {
   const { uploadFiles, uploadProgress, selectedFolderId } = useDocuments();

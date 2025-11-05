@@ -1,16 +1,27 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { MainLayout } from './components/layout/MainLayout';
+import { FileText } from 'lucide-react';
 import { VaultPage } from './pages/VaultPage';
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <MainLayout>
+      <div className="main-layout">
+      <header className="header">
+        <div className="header-content">
+          <div className="logo">
+            <FileText size={32} />
+            <h1>AI Document Vault</h1>
+          </div>
+          <p className="tagline">Intelligent Document Management</p>
+        </div>
+      </header>
+      <main className="main-content">
         <Routes>
           <Route path="/" element={<VaultPage />} />
         </Routes>
-      </MainLayout>
+      </main>
+    </div>
     </Router>
   );
 }

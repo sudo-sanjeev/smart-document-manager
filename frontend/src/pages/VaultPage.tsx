@@ -1,6 +1,6 @@
-import { DocumentUpload } from '../components/documents/DocumentUpload';
-import { FileExplorer } from '../components/documents/FileExplorer';
-import { DocumentViewer } from '../components/documents/DocumentViewer';
+import { DocumentUpload } from '../components/DocumentUpload/DocumentUpload';
+import { FileExplorer } from '../components/FileExplorer/FileExplorer';
+import { DocumentViewer } from '../components/DocumentViewer/DocumentViewer';
 import { useDocuments } from '../hooks/useDocuments';
 import './VaultPage.css';
 
