@@ -88,9 +88,17 @@ const processDocumentAsync = async (documentId, filePath) => {
     }
   } catch (error) {
     console.error(`Error processing document ${documentId}:`, error);
-    await updateDocument(documentId, {
-      processingStatus: "failed",
-    });
+    // Make sure we ALWAYS update the status, even if there's an error
+    try {
+      await updateDocument(documentId, {
+        processingStatus: "failed",
+      });
+    } catch (updateError) {
+      console.error(
+        `Failed to update document status for ${documentId}:`,
+        updateError
+      );
+    }
   }
 };
 

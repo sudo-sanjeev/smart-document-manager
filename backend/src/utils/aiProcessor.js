@@ -1,5 +1,6 @@
 const Anthropic = require("@anthropic-ai/sdk");
 const fs = require("fs").promises;
+const pdf = require("pdf-parse");
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -10,11 +11,24 @@ const anthropic = new Anthropic({
  */
 const extractTextFromFile = async (filePath) => {
   try {
-    const content = await fs.readFile(filePath, "utf-8");
-    return content;
+    const fileExtension = filePath.split(".").pop().toLowerCase();
+
+    if (fileExtension === "pdf") {
+      // Handle PDF files
+      console.log("Extracting text from PDF:", filePath);
+      const dataBuffer = await fs.readFile(filePath);
+      const data = await pdf(dataBuffer);
+      console.log(`Extracted ${data.text.length} characters from PDF`);
+      return data.text;
+    } else {
+      // Handle text files (txt, md, doc, docx)
+      console.log("Reading text file:", filePath);
+      const content = await fs.readFile(filePath, "utf-8");
+      return content;
+    }
   } catch (error) {
     console.error("Error reading file:", error);
-    throw new Error("Failed to read file content");
+    throw new Error(`Failed to read file content: ${error.message}`);
   }
 };
 
@@ -24,7 +38,7 @@ const extractTextFromFile = async (filePath) => {
 const generateSummary = async (text) => {
   try {
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+      model: "claude-3-haiku-20240307",
       max_tokens: 1024,
       messages: [
         {
@@ -40,7 +54,7 @@ ${text.substring(0, 100000)}`, // Limit to ~100k chars to stay within token limi
     return message.content[0].text;
   } catch (error) {
     console.error("Error generating summary:", error);
-    throw new Error("Failed to generate summary");
+    throw new Error(`Failed to generate summary: ${error.message}`);
   }
 };
 
@@ -50,7 +64,7 @@ ${text.substring(0, 100000)}`, // Limit to ~100k chars to stay within token limi
 const generateMarkdown = async (text) => {
   try {
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+      model: "claude-3-haiku-20240307",
       max_tokens: 4096,
       messages: [
         {
@@ -66,7 +80,7 @@ ${text.substring(0, 100000)}`, // Limit to ~100k chars
     return message.content[0].text;
   } catch (error) {
     console.error("Error generating markdown:", error);
-    throw new Error("Failed to generate markdown");
+    throw new Error(`Failed to generate markdown: ${error.message}`);
   }
 };
 
