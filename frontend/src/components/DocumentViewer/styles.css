@@ -172,6 +172,21 @@
   margin: 0;
 }
 
+.pdf-viewer {
+  padding: 0;
+  height: 600px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
 .summary-badge,
 .markdown-badge {
   display: inline-flex;
@@ -310,6 +325,125 @@
   background: #9ca3af;
 }
 
+/* Accordion Styles */
+.document-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.accordion-item {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordion-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-item.open {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.accordion-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.accordion-header:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.accordion-header:disabled {
+  cursor: not-allowed;
+}
+
+.accordion-item.open .accordion-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.accordion-item.open .accordion-title {
+  color: white;
+}
+
+.accordion-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accordion-chevron {
+  transition: transform 0.3s ease;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.accordion-item.open .accordion-chevron {
+  transform: rotate(180deg);
+  color: white;
+}
+
+.accordion-content {
+  padding: 1.5rem;
+  animation: accordionSlideDown 0.3s ease;
+  border-top: 1px solid #e5e7eb;
+}
+
+.accordion-item.open .accordion-content {
+  border-top-color: rgba(102, 126, 234, 0.2);
+}
+
+@keyframes accordionSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Update content styles for accordion */
+.accordion-content .content-summary,
+.accordion-content .content-markdown,
+.accordion-content .content-original {
+  animation: none;
+}
+
+.accordion-content .summary-badge,
+.accordion-content .markdown-badge {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .viewer-header {
     padding: 1rem;
@@ -336,6 +470,22 @@
   .original-text {
     padding: 1rem;
     font-size: 0.95rem;
+  }
+
+  .accordion-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .accordion-title {
+    font-size: 0.9rem;
+  }
+
+  .accordion-content {
+    padding: 1rem;
+  }
+
+  .pdf-viewer {
+    height: 400px;
   }
 }
 

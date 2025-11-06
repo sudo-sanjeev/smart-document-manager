@@ -1,49 +1,18 @@
-import { useState, useEffect } from 'react';
-import { FileText, Sparkles, Code } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import { FileText } from 'lucide-react';
 import { useDocumentStore } from '../../store/documentStore';
 import { useUIStore } from '../../store/uiStore';
-import { documentService } from '../../services/documentService';
+import { DocumentAccordion } from './components/DocumentAccordion';
 import './styles.css';
 
-type ViewTab = 'original' | 'summary' | 'markdown';
-
 export const DocumentViewer = () => {
-  // Selective subscriptions - derived state for selected document
   const documents = useDocumentStore((state) => state.documents);
   const selectedDocumentId = useUIStore((state) => state.selectedDocumentId);
   const setViewMode = useUIStore((state) => state.setViewMode);
-  
+
   const selectedDocument = documents.find((doc) => doc.id === selectedDocumentId) || null;
-  const [activeTab, setActiveTab] = useState<ViewTab>('summary');
-  const [documentContent, setDocumentContent] = useState<string>('');
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
 
-  useEffect(() => {
-    if (selectedDocument && activeTab === 'original') {
-      loadOriginalContent();
-    }
-  }, [selectedDocument, activeTab]);
-
-  const loadOriginalContent = async () => {
-    if (!selectedDocument) return;
-
-    try {
-      setIsLoadingContent(true);
-      const blob = await documentService.getDocumentContent(selectedDocument.id);
-      const text = await blob.text();
-      setDocumentContent(text);
-    } catch (error) {
-      console.error('Error loading document content:', error);
-      setDocumentContent('Error loading document content.');
-    } finally {
-      setIsLoadingContent(false);
-    }
-  };
-
-  const handleTabChange = (tab: ViewTab) => {
-    setActiveTab(tab);
-    setViewMode(tab);
+  const handleViewChange = (view: string) => {
+    setViewMode(view as 'original' | 'summary' | 'markdown');
   };
 
   if (!selectedDocument) {
@@ -78,60 +47,12 @@ export const DocumentViewer = () => {
       );
     }
 
-    switch (activeTab) {
-      case 'original':
-        return (
-          <div className="content-original">
-            {isLoadingContent ? (
-              <div className="loading-content">
-                <div className="spinner" />
-                <p>Loading document...</p>
-              </div>
-            ) : (
-              <pre className="original-text">{documentContent || 'No content available'}</pre>
-            )}
-          </div>
-        );
-
-      case 'summary':
-        return (
-          <div className="content-summary">
-            {selectedDocument.summary ? (
-              <>
-                <div className="summary-badge">
-                  <Sparkles size={16} />
-                  <span>AI Generated Summary</span>
-                </div>
-                <div className="summary-text">{selectedDocument.summary}</div>
-              </>
-            ) : (
-              <p className="no-content">No summary available for this document.</p>
-            )}
-          </div>
-        );
-
-      case 'markdown':
-        return (
-          <div className="content-markdown">
-            {selectedDocument.markdown ? (
-              <>
-                <div className="markdown-badge">
-                  <Code size={16} />
-                  <span>AI Generated Markdown</span>
-                </div>
-                <div className="markdown-content">
-                  <ReactMarkdown>{selectedDocument.markdown}</ReactMarkdown>
-                </div>
-              </>
-            ) : (
-              <p className="no-content">No markdown version available for this document.</p>
-            )}
-          </div>
-        );
-
-      default:
-        return null;
-    }
+    return (
+      <DocumentAccordion 
+        document={selectedDocument} 
+        onViewChange={handleViewChange}
+      />
+    );
   };
 
   return (
@@ -148,30 +69,6 @@ export const DocumentViewer = () => {
               {new Date(selectedDocument.uploadedAt).toLocaleDateString()}
             </span>
           </div>
-        </div>
-
-        <div className="view-tabs">
-          <button
-            className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
-            onClick={() => handleTabChange('summary')}
-          >
-            <Sparkles size={16} />
-            Summary
-          </button>
-          <button
-            className={`tab ${activeTab === 'markdown' ? 'active' : ''}`}
-            onClick={() => handleTabChange('markdown')}
-          >
-            <Code size={16} />
-            Markdown
-          </button>
-          <button
-            className={`tab ${activeTab === 'original' ? 'active' : ''}`}
-            onClick={() => handleTabChange('original')}
-          >
-            <FileText size={16} />
-            Original
-          </button>
         </div>
       </div>
 
