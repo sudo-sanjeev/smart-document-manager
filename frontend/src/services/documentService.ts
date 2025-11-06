@@ -5,14 +5,9 @@ import { useFolderStore } from '../store/folderStore';
 import { useUploadStore } from '../store/uploadStore';
 import { useUIStore } from '../store/uiStore';
 
-/**
- * Document Service - Business logic for document operations
- * Separated from UI components for better maintainability and testability
- */
+
 export const documentService = {
-  /**
-   * Load all documents and folders from the API
-   */
+
   loadData: async () => {
     const setDocuments = useDocumentStore.getState().setDocuments;
     const setFolders = useFolderStore.getState().setFolders;
@@ -40,18 +35,12 @@ export const documentService = {
     }
   },
 
-  /**
-   * Upload multiple files to the server
-   * @param files - Array of files to upload
-   * @param folderId - Optional folder ID to upload files to
-   */
   uploadFiles: async (files: File[], folderId?: string) => {
     const addDocument = useDocumentStore.getState().addDocument;
     const addUploadProgress = useUploadStore.getState().addUploadProgress;
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
 
     try {
-      // Add upload progress for each file
       files.forEach((file) => {
         addUploadProgress({
           filename: file.name,
@@ -60,10 +49,8 @@ export const documentService = {
         });
       });
 
-      // Upload files
       const uploadedDocs = await documentAPI.uploadDocuments(files, folderId);
 
-      // Update progress to processing
       files.forEach((file) => {
         updateUploadProgress(file.name, {
           progress: 100,
@@ -71,12 +58,10 @@ export const documentService = {
         });
       });
 
-      // Poll for processing status
       uploadedDocs.forEach((doc) => {
         documentService.pollDocumentStatus(doc.id, doc.name);
       });
 
-      // Add documents to store
       uploadedDocs.forEach((doc) => addDocument(doc));
 
       return uploadedDocs;
@@ -91,17 +76,12 @@ export const documentService = {
     }
   },
 
-  /**
-   * Poll document processing status
-   * @param docId - Document ID to poll
-   * @param filename - Filename for progress tracking
-   */
   pollDocumentStatus: async (docId: string, filename: string) => {
     const updateDocument = useDocumentStore.getState().updateDocument;
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
     const removeUploadProgress = useUploadStore.getState().removeUploadProgress;
 
-    const maxAttempts = 30; // 30 attempts = ~1 minute
+    const maxAttempts = 30; 
     let attempts = 0;
 
     const poll = setInterval(async () => {
@@ -117,7 +97,6 @@ export const documentService = {
           updateDocument(docId, doc);
           clearInterval(poll);
 
-          // Remove progress after 2 seconds
           setTimeout(() => {
             removeUploadProgress(filename);
           }, 2000);
@@ -141,11 +120,6 @@ export const documentService = {
     }, 2000);
   },
 
-  /**
-   * Create a new folder
-   * @param name - Folder name
-   * @param parentId - Optional parent folder ID
-   */
   createFolder: async (name: string, parentId?: string) => {
     const addFolder = useFolderStore.getState().addFolder;
     const setError = useUIStore.getState().setError;
@@ -162,18 +136,10 @@ export const documentService = {
     }
   },
 
-  /**
-   * Get a document by ID
-   * @param id - Document ID
-   */
   getDocumentById: (id: string) => {
     return useDocumentStore.getState().getDocumentById(id);
   },
 
-  /**
-   * Get documents by folder ID
-   * @param folderId - Folder ID (null for root documents)
-   */
   getDocumentsByFolder: (folderId: string | null) => {
     return useDocumentStore.getState().getDocumentsByFolder(folderId);
   },

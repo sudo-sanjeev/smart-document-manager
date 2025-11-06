@@ -2,10 +2,7 @@ import { create } from 'zustand';
 import type { UploadProgress } from '../types';
 
 interface UploadStore {
-  // State
   uploadProgress: UploadProgress[];
-
-  // Actions
   setUploadProgress: (progress: UploadProgress[]) => void;
   addUploadProgress: (progress: UploadProgress) => void;
   updateUploadProgress: (filename: string, updates: Partial<UploadProgress>) => void;
@@ -15,10 +12,8 @@ interface UploadStore {
 }
 
 export const useUploadStore = create<UploadStore>((set) => ({
-  // Initial state
   uploadProgress: [],
 
-  // Actions
   setUploadProgress: (progress) => set({ uploadProgress: progress }),
 
   addUploadProgress: (progress) =>
