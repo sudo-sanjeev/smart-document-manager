@@ -61,6 +61,73 @@
   padding: 2rem;
 }
 
+/* Vault Page Styles */
+.vault-page {
+  height: 100%;
+  width: 100%;
+}
+
+.vault-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-section {
+  margin-bottom: 2rem;
+}
+
+.error-banner {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #ef4444;
+}
+
+.error-banner strong {
+  font-weight: 700;
+}
+
+.vault-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar {
+  overflow: hidden;
+}
+
+.content-area {
+  overflow: hidden;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .vault-main {
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .vault-main {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sidebar {
+    max-height: 400px;
+  }
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 1rem;
@@ -82,5 +149,13 @@
 
   .main-content {
     padding: 1rem;
+  }
+
+  .upload-section {
+    margin-bottom: 1rem;
+  }
+
+  .vault-main {
+    gap: 1rem;
   }
 }

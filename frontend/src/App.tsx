@@ -6,7 +6,6 @@ import { DocumentViewer } from './components/DocumentViewer/DocumentViewer';
 import { useUIStore } from './store/uiStore';
 import { documentService } from './services/documentService';
 import './App.css';
-import './pages/VaultPage.css';
 
 function App() {
   const error = useUIStore((state) => state.error);

@@ -1,4 +1,4 @@
-import type { FolderType, APIResponse } from '../types';
+import type { FolderType, APIResponse } from '../../types';
 import { api, FOLDER_ENDPOINTS } from './constants';
 
 export const folderAPI = {

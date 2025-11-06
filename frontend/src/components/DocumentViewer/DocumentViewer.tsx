@@ -3,7 +3,7 @@ import { FileText, Sparkles, Code } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useDocumentStore } from '../../store/documentStore';
 import { useUIStore } from '../../store/uiStore';
-import { documentAPI } from '../../service-integration/document-api';
+import { documentService } from '../../services/documentService';
 import './styles.css';
 
 type ViewTab = 'original' | 'summary' | 'markdown';
@@ -30,7 +30,7 @@ export const DocumentViewer = () => {
 
     try {
       setIsLoadingContent(true);
-      const blob = await documentAPI.getDocumentContent(selectedDocument.id);
+      const blob = await documentService.getDocumentContent(selectedDocument.id);
       const text = await blob.text();
       setDocumentContent(text);
     } catch (error) {

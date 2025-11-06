@@ -1,5 +1,5 @@
-import { documentAPI } from '../service-integration/document-api';
-import { folderAPI } from '../service-integration/folder-api';
+import { documentAPI } from './api/document-api';
+import { folderAPI } from './api/folder-api';
 import { useDocumentStore } from '../store/documentStore';
 import { useFolderStore } from '../store/folderStore';
 import { useUploadStore } from '../store/uploadStore';
@@ -142,6 +142,10 @@ export const documentService = {
 
   getDocumentsByFolder: (folderId: string | null) => {
     return useDocumentStore.getState().getDocumentsByFolder(folderId);
+  },
+
+  getDocumentContent: async (id: string): Promise<Blob> => {
+    return await documentAPI.getDocumentContent(id);
   },
 };
 

@@ -7,7 +7,6 @@ import { documentService } from '../../services/documentService';
 import './styles.css';
 
 export const DocumentUpload = () => {
-  // Only subscribe to what we need - prevents unnecessary re-renders
   const uploadProgress = useUploadStore((state) => state.uploadProgress);
   const selectedFolderId = useUIStore((state) => state.selectedFolderId);
 

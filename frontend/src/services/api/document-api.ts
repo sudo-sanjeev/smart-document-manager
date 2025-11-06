@@ -1,4 +1,4 @@
-import type { DocumentType, APIResponse } from '../types';
+import type { DocumentType, APIResponse } from '../../types';
 import { api, DOCUMENT_ENDPOINTS } from './constants';
 
 export const documentAPI = {
