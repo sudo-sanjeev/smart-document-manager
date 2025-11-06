@@ -1,23 +1,27 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, File, AlertCircle, CheckCircle, Loader } from 'lucide-react';
-import { useDocuments } from '../../hooks/useDocuments';
+import { useUploadStore } from '../../store/uploadStore';
+import { useUIStore } from '../../store/uiStore';
+import { documentService } from '../../services/documentService';
 import './styles.css';
 
 export const DocumentUpload = () => {
-  const { uploadFiles, uploadProgress, selectedFolderId } = useDocuments();
+  // Only subscribe to what we need - prevents unnecessary re-renders
+  const uploadProgress = useUploadStore((state) => state.uploadProgress);
+  const selectedFolderId = useUIStore((state) => state.selectedFolderId);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         try {
-          await uploadFiles(acceptedFiles, selectedFolderId || undefined);
+          await documentService.uploadFiles(acceptedFiles, selectedFolderId || undefined);
         } catch (error) {
           console.error('Upload error:', error);
         }
       }
     },
-    [uploadFiles, selectedFolderId]
+    [selectedFolderId]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({

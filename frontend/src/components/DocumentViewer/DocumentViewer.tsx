@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
 import { FileText, Sparkles, Code } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { useDocuments } from '../../hooks/useDocuments';
+import { useDocumentStore } from '../../store/documentStore';
+import { useUIStore } from '../../store/uiStore';
 import { documentAPI } from '../../service-integration/document-api';
 import './styles.css';
 
 type ViewTab = 'original' | 'summary' | 'markdown';
 
 export const DocumentViewer = () => {
-  const { getSelectedDocument, viewMode, changeViewMode } = useDocuments();
-  const selectedDocument = getSelectedDocument();
+  // Selective subscriptions - derived state for selected document
+  const documents = useDocumentStore((state) => state.documents);
+  const selectedDocumentId = useUIStore((state) => state.selectedDocumentId);
+  const setViewMode = useUIStore((state) => state.setViewMode);
+  
+  const selectedDocument = documents.find((doc) => doc.id === selectedDocumentId) || null;
   const [activeTab, setActiveTab] = useState<ViewTab>('summary');
   const [documentContent, setDocumentContent] = useState<string>('');
   const [isLoadingContent, setIsLoadingContent] = useState(false);
@@ -38,7 +43,7 @@ export const DocumentViewer = () => {
 
   const handleTabChange = (tab: ViewTab) => {
     setActiveTab(tab);
-    changeViewMode(tab);
+    setViewMode(tab);
   };
 
   if (!selectedDocument) {

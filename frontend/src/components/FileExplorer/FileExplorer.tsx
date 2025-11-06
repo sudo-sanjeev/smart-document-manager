@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { Folder, File, ChevronRight, ChevronDown, FolderPlus } from 'lucide-react';
-import { useDocuments } from '../../hooks/useDocuments';
+import { useDocumentStore } from '../../store/documentStore';
+import { useFolderStore } from '../../store/folderStore';
+import { useUIStore } from '../../store/uiStore';
+import { documentService } from '../../services/documentService';
 import type { FolderType } from '../../types';
 import './styles.css';
 
 export const FileExplorer = () => {
-  const {
-    folders,
-    documents,
-    selectedDocumentId,
-    selectedFolderId,
-    selectDocument,
-    selectFolder,
-    createNewFolder,
-  } = useDocuments();
+  // Selective subscriptions - only re-renders when these specific values change
+  const documents = useDocumentStore((state) => state.documents);
+  const folders = useFolderStore((state) => state.folders);
+  const selectedDocumentId = useUIStore((state) => state.selectedDocumentId);
+  const selectedFolderId = useUIStore((state) => state.selectedFolderId);
+  const setSelectedDocument = useUIStore((state) => state.setSelectedDocument);
+  const setSelectedFolder = useUIStore((state) => state.setSelectedFolder);
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['root']));
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -31,18 +32,18 @@ export const FileExplorer = () => {
   };
 
   const handleFolderClick = (folderId: string | null) => {
-    selectFolder(folderId);
-    selectDocument(null);
+    setSelectedFolder(folderId);
+    setSelectedDocument(null);
   };
 
   const handleDocumentClick = (docId: string) => {
-    selectDocument(docId);
+    setSelectedDocument(docId);
   };
 
   const handleCreateFolder = async () => {
     if (newFolderName.trim()) {
       try {
-        await createNewFolder(newFolderName.trim(), newFolderParent || undefined);
+        await documentService.createFolder(newFolderName.trim(), newFolderParent || undefined);
         setIsCreatingFolder(false);
         setNewFolderName('');
         setNewFolderParent(null);

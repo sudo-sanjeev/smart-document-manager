@@ -1,57 +1,55 @@
-import { useEffect } from 'react';
-import { useDocumentStore } from '../store/documentStore';
 import { documentAPI } from '../service-integration/document-api';
 import { folderAPI } from '../service-integration/folder-api';
+import { useDocumentStore } from '../store/documentStore';
+import { useFolderStore } from '../store/folderStore';
+import { useUploadStore } from '../store/uploadStore';
+import { useUIStore } from '../store/uiStore';
 
-export const useDocuments = () => {
-  const {
-    documents,
-    folders,
-    selectedDocumentId,
-    selectedFolderId,
-    viewMode,
-    uploadProgress,
-    isLoading,
-    error,
-    setDocuments,
-    addDocument,
-    setFolders,
-    addFolder,
-    setSelectedDocument,
-    setSelectedFolder,
-    setViewMode,
-    addUploadProgress,
-    updateUploadProgress,
-    removeUploadProgress,
-    setLoading,
-    setError,
-    updateDocument,
-  } = useDocumentStore();
+/**
+ * Document Service - Business logic for document operations
+ * Separated from UI components for better maintainability and testability
+ */
+export const documentService = {
+  /**
+   * Load all documents and folders from the API
+   */
+  loadData: async () => {
+    const setDocuments = useDocumentStore.getState().setDocuments;
+    const setFolders = useFolderStore.getState().setFolders;
+    const setLoading = useUIStore.getState().setLoading;
+    const setError = useUIStore.getState().setError;
 
-  // Load documents and folders on mount
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
+
       const [docs, folds] = await Promise.all([
         documentAPI.getAllDocuments(),
         folderAPI.getAllFolders(),
       ]);
+
       setDocuments(docs);
       setFolders(folds);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load data');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load data';
+      setError(errorMessage);
       console.error('Error loading data:', err);
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  },
 
-  const uploadFiles = async (files: File[], folderId?: string) => {
+  /**
+   * Upload multiple files to the server
+   * @param files - Array of files to upload
+   * @param folderId - Optional folder ID to upload files to
+   */
+  uploadFiles: async (files: File[], folderId?: string) => {
+    const addDocument = useDocumentStore.getState().addDocument;
+    const addUploadProgress = useUploadStore.getState().addUploadProgress;
+    const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
+
     try {
       // Add upload progress for each file
       files.forEach((file) => {
@@ -65,7 +63,7 @@ export const useDocuments = () => {
       // Upload files
       const uploadedDocs = await documentAPI.uploadDocuments(files, folderId);
 
-      // Update progress
+      // Update progress to processing
       files.forEach((file) => {
         updateUploadProgress(file.name, {
           progress: 100,
@@ -75,7 +73,7 @@ export const useDocuments = () => {
 
       // Poll for processing status
       uploadedDocs.forEach((doc) => {
-        pollDocumentStatus(doc.id, doc.name);
+        documentService.pollDocumentStatus(doc.id, doc.name);
       });
 
       // Add documents to store
@@ -91,9 +89,18 @@ export const useDocuments = () => {
       });
       throw err;
     }
-  };
+  },
 
-  const pollDocumentStatus = async (docId: string, filename: string) => {
+  /**
+   * Poll document processing status
+   * @param docId - Document ID to poll
+   * @param filename - Filename for progress tracking
+   */
+  pollDocumentStatus: async (docId: string, filename: string) => {
+    const updateDocument = useDocumentStore.getState().updateDocument;
+    const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
+    const removeUploadProgress = useUploadStore.getState().removeUploadProgress;
+
     const maxAttempts = 30; // 30 attempts = ~1 minute
     let attempts = 0;
 
@@ -109,7 +116,7 @@ export const useDocuments = () => {
           });
           updateDocument(docId, doc);
           clearInterval(poll);
-          
+
           // Remove progress after 2 seconds
           setTimeout(() => {
             removeUploadProgress(filename);
@@ -132,59 +139,43 @@ export const useDocuments = () => {
         clearInterval(poll);
       }
     }, 2000);
-  };
+  },
 
-  const createNewFolder = async (name: string, parentId?: string) => {
+  /**
+   * Create a new folder
+   * @param name - Folder name
+   * @param parentId - Optional parent folder ID
+   */
+  createFolder: async (name: string, parentId?: string) => {
+    const addFolder = useFolderStore.getState().addFolder;
+    const setError = useUIStore.getState().setError;
+
     try {
       const folder = await folderAPI.createFolder(name, parentId);
       addFolder(folder);
       return folder;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create folder');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to create folder';
+      setError(errorMessage);
       throw err;
     }
-  };
+  },
 
-  const selectDocument = (id: string | null) => {
-    setSelectedDocument(id);
-  };
+  /**
+   * Get a document by ID
+   * @param id - Document ID
+   */
+  getDocumentById: (id: string) => {
+    return useDocumentStore.getState().getDocumentById(id);
+  },
 
-  const selectFolder = (id: string | null) => {
-    setSelectedFolder(id);
-  };
-
-  const changeViewMode = (mode: 'original' | 'summary' | 'markdown') => {
-    setViewMode(mode);
-  };
-
-  const getSelectedDocument = () => {
-    return documents.find((doc) => doc.id === selectedDocumentId) || null;
-  };
-
-  const getDocumentsByCurrentFolder = () => {
-    if (!selectedFolderId) {
-      return documents.filter((doc) => !doc.folderId);
-    }
-    return documents.filter((doc) => doc.folderId === selectedFolderId);
-  };
-
-  return {
-    documents,
-    folders,
-    selectedDocumentId,
-    selectedFolderId,
-    viewMode,
-    uploadProgress,
-    isLoading,
-    error,
-    uploadFiles,
-    createNewFolder,
-    selectDocument,
-    selectFolder,
-    changeViewMode,
-    getSelectedDocument,
-    getDocumentsByCurrentFolder,
-    refreshData: loadData,
-  };
+  /**
+   * Get documents by folder ID
+   * @param folderId - Folder ID (null for root documents)
+   */
+  getDocumentsByFolder: (folderId: string | null) => {
+    return useDocumentStore.getState().getDocumentsByFolder(folderId);
+  },
 };
 

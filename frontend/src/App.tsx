@@ -1,12 +1,22 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import { FileText } from 'lucide-react';
-import { VaultPage } from './pages/VaultPage';
+import { DocumentUpload } from './components/DocumentUpload/DocumentUpload';
+import { FileExplorer } from './components/FileExplorer/FileExplorer';
+import { DocumentViewer } from './components/DocumentViewer/DocumentViewer';
+import { useUIStore } from './store/uiStore';
+import { documentService } from './services/documentService';
 import './App.css';
+import './pages/VaultPage.css';
 
 function App() {
+  const error = useUIStore((state) => state.error);
+
+  useEffect(() => {
+    documentService.loadData();
+  }, []);
+
   return (
-    <Router>
-      <div className="main-layout">
+    <div className="main-layout">
       <header className="header">
         <div className="header-content">
           <div className="logo">
@@ -17,12 +27,30 @@ function App() {
         </div>
       </header>
       <main className="main-content">
-        <Routes>
-          <Route path="/" element={<VaultPage />} />
-        </Routes>
+        <div className="vault-page">
+          <div className="vault-container">
+            <div className="upload-section">
+              <DocumentUpload />
+            </div>
+
+            {error && (
+              <div className="error-banner">
+                <strong>Error:</strong> {error}
+              </div>
+            )}
+
+            <div className="vault-main">
+              <div className="sidebar">
+                <FileExplorer />
+              </div>
+              <div className="content-area">
+                <DocumentViewer />
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
-    </Router>
   );
 }
 
