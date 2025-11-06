@@ -1,0 +1,53 @@
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.dropzone:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.dropzone.drag-active {
+  border-color: #667eea;
+  background: #f0f4ff;
+  border-style: solid;
+}
+
+.dropzone.drag-reject {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.dropzone.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upload-icon {
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.dropzone-text {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.dropzone-text.error {
+  color: #ef4444;
+}
+
+.dropzone-hint {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+

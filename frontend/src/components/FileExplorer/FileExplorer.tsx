@@ -8,7 +8,6 @@ import type { FolderType } from '../../types';
 import './styles.css';
 
 export const FileExplorer = () => {
-  // Selective subscriptions - only re-renders when these specific values change
   const documents = useDocumentStore((state) => state.documents);
   const folders = useFolderStore((state) => state.folders);
   const selectedDocumentId = useUIStore((state) => state.selectedDocumentId);

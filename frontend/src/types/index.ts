@@ -33,6 +33,7 @@ export interface FileNode {
 }
 
 export interface UploadProgress {
+  id: string;
   filename: string;
   progress: number;
   status: 'uploading' | 'processing' | 'completed' | 'failed';

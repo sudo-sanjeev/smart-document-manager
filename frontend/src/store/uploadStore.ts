@@ -21,17 +21,17 @@ export const useUploadStore = create<UploadStore>((set) => ({
       uploadProgress: [...state.uploadProgress, progress],
     })),
 
-  updateUploadProgress: (filename, updates) =>
+  updateUploadProgress: (idOrFilename, updates) =>
     set((state) => ({
       uploadProgress: state.uploadProgress.map((item) =>
-        item.filename === filename ? { ...item, ...updates } : item
+        item.id === idOrFilename || item.filename === idOrFilename ? { ...item, ...updates } : item
       ),
     })),
 
-  removeUploadProgress: (filename) =>
+  removeUploadProgress: (idOrFilename) =>
     set((state) => ({
       uploadProgress: state.uploadProgress.filter(
-        (item) => item.filename !== filename
+        (item) => item.id !== idOrFilename && item.filename !== idOrFilename
       ),
     })),
 

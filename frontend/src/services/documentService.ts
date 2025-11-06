@@ -41,8 +41,13 @@ export const documentService = {
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
 
     try {
+      // Create upload progress entries with unique IDs
+      const fileIdMap = new Map<string, string>();
       files.forEach((file) => {
+        const id = `${file.name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        fileIdMap.set(file.name, id);
         addUploadProgress({
+          id,
           filename: file.name,
           progress: 0,
           status: 'uploading',
@@ -51,15 +56,23 @@ export const documentService = {
 
       const uploadedDocs = await documentAPI.uploadDocuments(files, folderId);
 
+      // Update progress to processing
       files.forEach((file) => {
-        updateUploadProgress(file.name, {
-          progress: 100,
-          status: 'processing',
-        });
+        const id = fileIdMap.get(file.name);
+        if (id) {
+          updateUploadProgress(id, {
+            progress: 100,
+            status: 'processing',
+          });
+        }
       });
 
+      // Poll for document processing status
       uploadedDocs.forEach((doc) => {
-        documentService.pollDocumentStatus(doc.id, doc.name);
+        const id = fileIdMap.get(doc.name);
+        if (id) {
+          documentService.pollDocumentStatus(doc.id, id);
+        }
       });
 
       uploadedDocs.forEach((doc) => addDocument(doc));
@@ -76,7 +89,7 @@ export const documentService = {
     }
   },
 
-  pollDocumentStatus: async (docId: string, filename: string) => {
+  pollDocumentStatus: async (docId: string, uploadProgressId: string) => {
     const updateDocument = useDocumentStore.getState().updateDocument;
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
     const removeUploadProgress = useUploadStore.getState().removeUploadProgress;
@@ -90,7 +103,7 @@ export const documentService = {
         const doc = await documentAPI.getDocumentById(docId);
 
         if (doc && doc.processingStatus === 'completed') {
-          updateUploadProgress(filename, {
+          updateUploadProgress(uploadProgressId, {
             status: 'completed',
             progress: 100,
           });
@@ -98,16 +111,16 @@ export const documentService = {
           clearInterval(poll);
 
           setTimeout(() => {
-            removeUploadProgress(filename);
+            removeUploadProgress(uploadProgressId);
           }, 2000);
         } else if (doc && doc.processingStatus === 'failed') {
-          updateUploadProgress(filename, {
+          updateUploadProgress(uploadProgressId, {
             status: 'failed',
             error: 'AI processing failed',
           });
           clearInterval(poll);
         } else if (attempts >= maxAttempts) {
-          updateUploadProgress(filename, {
+          updateUploadProgress(uploadProgressId, {
             status: 'failed',
             error: 'Processing timeout',
           });
