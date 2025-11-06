@@ -1,4 +1,4 @@
-import type { UploadProgress } from '../../../types';
+import type { UploadProgress } from '../../types';
 import { UploadProgressItem } from './UploadProgressItem';
 import './styles.css';
 

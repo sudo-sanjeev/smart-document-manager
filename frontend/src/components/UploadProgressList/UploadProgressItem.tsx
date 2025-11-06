@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { File as FileIcon, AlertCircle, CheckCircle, Loader } from 'lucide-react';
-import type { UploadProgress } from '../../../types';
+import type { UploadProgress } from '../../types';
 
 interface UploadProgressItemProps {
   item: UploadProgress;
