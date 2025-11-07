@@ -1,5 +1,5 @@
-import { UploadDropzone } from '../UploadDropzone/UploadDropzone';
-import { UploadProgressList } from '../UploadProgressList/UploadProgressList';
+import { UploadDropzone } from './UploadDropzone/UploadDropzone';
+import { UploadProgressList } from './UploadProgressList/UploadProgressList';
 import { useFileUpload } from './hooks/useFileUpload';
 import './styles.css';
 
