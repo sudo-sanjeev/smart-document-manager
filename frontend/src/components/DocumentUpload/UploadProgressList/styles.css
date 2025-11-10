@@ -45,7 +45,7 @@
 
 .status-icon .spin {
   animation: spin 1s linear infinite;
-  color: #667eea;
+  color: #0ea5e9;
 }
 
 .status-icon .success {
@@ -81,7 +81,7 @@
 }
 
 .progress-fill.uploading {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: #0ea5e9;
 }
 
 .progress-fill.processing {

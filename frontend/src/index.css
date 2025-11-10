@@ -14,14 +14,14 @@
 
   /* Color variables */
   --background: #ffffff;
-  --background-secondary: #f9fafb;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border: #e5e7eb;
-  --hover-bg: #f3f4f6;
-  --selected-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent: #667eea;
-  --accent-hover: #5568d3;
+  --background-secondary: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --hover-bg: #f1f5f9;
+  --selected-bg: #0f172a;
+  --accent: #0ea5e9;
+  --accent-hover: #0284c7;
 }
 
 * {
