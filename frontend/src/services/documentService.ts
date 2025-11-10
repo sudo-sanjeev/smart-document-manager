@@ -149,6 +149,41 @@ export const documentService = {
     }
   },
 
+  deleteFolder: async (id: string) => {
+    const removeFolder = useFolderStore.getState().removeFolder;
+    const setError = useUIStore.getState().setError;
+
+    try {
+      await folderAPI.deleteFolder(id);
+      removeFolder(id);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to delete folder';
+      setError(errorMessage);
+      throw err;
+    }
+  },
+
+  deleteDocument: async (id: string) => {
+    const removeDocument = useDocumentStore.getState().removeDocument;
+    const setSelectedDocument = useUIStore.getState().setSelectedDocument;
+    const selectedDocumentId = useUIStore.getState().selectedDocumentId;
+    const setError = useUIStore.getState().setError;
+
+    try {
+      await documentAPI.deleteDocument(id);
+      removeDocument(id);
+      if (selectedDocumentId === id) {
+        setSelectedDocument(null);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to delete document';
+      setError(errorMessage);
+      throw err;
+    }
+  },
+
   getDocumentById: (id: string) => {
     return useDocumentStore.getState().getDocumentById(id);
   },

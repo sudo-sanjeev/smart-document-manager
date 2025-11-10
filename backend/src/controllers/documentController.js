@@ -46,7 +46,9 @@ const uploadDocuments = async (req, res) => {
       uploadedDocuments.push(document);
 
       // Process document with AI in the background
-      processDocumentAsync(document.id, file.path);
+      processDocumentAsync(document.id, file.path).catch((err) => {
+        console.error(`Background processing error for ${document.id}:`, err);
+      });
     }
 
     res.status(201).json({
