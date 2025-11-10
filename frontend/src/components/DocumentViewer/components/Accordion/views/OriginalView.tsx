@@ -26,7 +26,6 @@ export const OriginalView = ({ content, blobUrl, isLoading, error, isPDF }: Orig
     );
   }
 
-  // Render PDF using iframe
   if (isPDF && blobUrl) {
     return (
       <div className="content-original pdf-viewer">
@@ -39,7 +38,6 @@ export const OriginalView = ({ content, blobUrl, isLoading, error, isPDF }: Orig
     );
   }
 
-  // Render text content
   return (
     <div className="content-original">
       <pre className="original-text">{content || 'No content available'}</pre>

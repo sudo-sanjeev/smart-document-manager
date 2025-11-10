@@ -6,10 +6,6 @@ interface FileOperationsState {
   error: string | null;
 }
 
-/**
- * Custom hook to handle file and folder operations
- * Provides methods for CRUD operations with loading and error states
- */
 export const useFileOperations = () => {
   const [state, setState] = useState<FileOperationsState>({
     isLoading: false,

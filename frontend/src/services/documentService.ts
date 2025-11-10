@@ -56,7 +56,6 @@ export const documentService = {
 
       const uploadedDocs = await documentAPI.uploadDocuments(files, folderId);
 
-      // Update progress to processing
       files.forEach((file) => {
         const id = fileIdMap.get(file.name);
         if (id) {
@@ -67,7 +66,6 @@ export const documentService = {
         }
       });
 
-      // Poll for document processing status
       uploadedDocs.forEach((doc) => {
         const id = fileIdMap.get(doc.name);
         if (id) {

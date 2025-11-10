@@ -6,33 +6,23 @@ import { useFolderTree } from './hooks/useFolderTree';
 import { useFileOperations } from './hooks/useFileOperations';
 import { FolderItem } from './components/FolderItem';
 import { FileItem } from './components/FileItem';
-import { ConfirmDialog } from './components/ConfirmDialog';
 import './styles.css';
 
-type DialogType = 
-  | { type: 'none' }
-  | { type: 'createFolder'; parentId: string | null }
-  | { type: 'deleteFolder'; folderId: string; folderName: string }
-  | { type: 'deleteDocument'; documentId: string; documentName: string };
-
 export const FileExplorer = () => {
-  // Store state
   const documents = useDocumentStore((state) => state.documents);
   const selectedDocumentId = useUIStore((state) => state.selectedDocumentId);
   const selectedFolderId = useUIStore((state) => state.selectedFolderId);
   const setSelectedDocument = useUIStore((state) => state.setSelectedDocument);
   const setSelectedFolder = useUIStore((state) => state.setSelectedFolder);
 
-  // Custom hooks
   const { folderTree } = useFolderTree();
   const fileOperations = useFileOperations();
 
-  // Local state
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['root']));
-  const [dialog, setDialog] = useState<DialogType>({ type: 'none' });
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newFolderParentId, setNewFolderParentId] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
 
-  // Folder operations
   const toggleFolder = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);
     if (newExpanded.has(folderId)) {
@@ -52,65 +42,51 @@ export const FileExplorer = () => {
     setSelectedDocument(docId);
   };
 
-  // Dialog handlers
   const openCreateFolderDialog = (parentId: string | null = null) => {
-    setDialog({ type: 'createFolder', parentId });
+    setIsCreatingFolder(true);
+    setNewFolderParentId(parentId);
     setNewFolderName('');
   };
 
-  const openDeleteFolderDialog = (folderId: string, folderName: string) => {
-    setDialog({ type: 'deleteFolder', folderId, folderName });
+  const closeCreateFolderDialog = () => {
+    setIsCreatingFolder(false);
+    setNewFolderParentId(null);
+    setNewFolderName('');
   };
 
-  const openDeleteDocumentDialog = (documentId: string, documentName: string) => {
-    setDialog({ type: 'deleteDocument', documentId, documentName });
-  };
-
-  const closeDialog = () => {
-    setDialog({ type: 'none' });
-  };
-
-  // CRUD operations
   const handleCreateFolder = async () => {
-    if (dialog.type !== 'createFolder' || !newFolderName.trim()) return;
+    if (!newFolderName.trim()) return;
     
     try {
       await fileOperations.createFolder(
         newFolderName.trim(),
-        dialog.parentId || undefined
+        newFolderParentId || undefined
       );
-      closeDialog();
+      closeCreateFolderDialog();
     } catch (error) {
       console.error('Failed to create folder:', error);
     }
   };
 
-  const handleDeleteFolder = async () => {
-    if (dialog.type !== 'deleteFolder') return;
-
+  const handleDeleteFolder = async (folderId: string) => {
     try {
-      await fileOperations.deleteFolder(dialog.folderId);
-      if (selectedFolderId === dialog.folderId) {
+      await fileOperations.deleteFolder(folderId);
+      if (selectedFolderId === folderId) {
         setSelectedFolder(null);
       }
-      closeDialog();
     } catch (error) {
       console.error('Failed to delete folder:', error);
     }
   };
 
-  const handleDeleteDocument = async () => {
-    if (dialog.type !== 'deleteDocument') return;
-
+  const handleDeleteDocument = async (documentId: string) => {
     try {
-      await fileOperations.deleteDocument(dialog.documentId);
-      closeDialog();
+      await fileOperations.deleteDocument(documentId);
     } catch (error) {
       console.error('Failed to delete document:', error);
     }
   };
 
-  // Render helpers
   const renderFolderTree = (folder: any, level: number = 0) => {
     const isExpanded = expandedFolders.has(folder.id);
     const isSelected = selectedFolderId === folder.id;
@@ -128,12 +104,9 @@ export const FileExplorer = () => {
         onToggle={() => toggleFolder(folder.id)}
         onSelect={() => handleFolderClick(folder.id)}
         onCreateSubfolder={() => openCreateFolderDialog(folder.id)}
-        onDelete={() => openDeleteFolderDialog(folder.id, folder.name)}
+        onDelete={() => handleDeleteFolder(folder.id)}
         onDocumentClick={handleDocumentClick}
-        onDocumentDelete={(docId) => {
-          const doc = documents.find((d) => d.id === docId);
-          if (doc) openDeleteDocumentDialog(docId, doc.name);
-        }}
+        onDocumentDelete={handleDeleteDocument}
       />
     );
   };
@@ -153,7 +126,7 @@ export const FileExplorer = () => {
         </button>
       </div>
 
-      {dialog.type === 'createFolder' && (
+      {isCreatingFolder && (
         <div className="new-folder-input">
           <input
             type="text"
@@ -162,14 +135,14 @@ export const FileExplorer = () => {
             onChange={(e) => setNewFolderName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleCreateFolder();
-              if (e.key === 'Escape') closeDialog();
+              if (e.key === 'Escape') closeCreateFolderDialog();
             }}
             autoFocus
           />
           <button onClick={handleCreateFolder} className="btn-primary">
             Create
           </button>
-          <button onClick={closeDialog} className="btn-secondary">
+          <button onClick={closeCreateFolderDialog} className="btn-secondary">
             Cancel
           </button>
         </div>
@@ -195,41 +168,13 @@ export const FileExplorer = () => {
                 level={0}
                 isSelected={selectedDocumentId === doc.id}
                 onClick={() => handleDocumentClick(doc.id)}
-                onDelete={() => openDeleteDocumentDialog(doc.id, doc.name)}
+                onDelete={() => handleDeleteDocument(doc.id)}
               />
             ))}
           </div>
         )}
       </div>
 
-      {/* Dialogs */}
-      <ConfirmDialog
-        isOpen={dialog.type === 'deleteFolder'}
-        title="Delete Folder"
-        message={
-          dialog.type === 'deleteFolder'
-            ? `Are you sure you want to delete "${dialog.folderName}"? This action cannot be undone.`
-            : ''
-        }
-        confirmText="Delete"
-        variant="danger"
-        onConfirm={handleDeleteFolder}
-        onCancel={closeDialog}
-      />
-
-      <ConfirmDialog
-        isOpen={dialog.type === 'deleteDocument'}
-        title="Delete Document"
-        message={
-          dialog.type === 'deleteDocument'
-            ? `Are you sure you want to delete "${dialog.documentName}"? This action cannot be undone.`
-            : ''
-        }
-        confirmText="Delete"
-        variant="danger"
-        onConfirm={handleDeleteDocument}
-        onCancel={closeDialog}
-      />
     </div>
   );
 };

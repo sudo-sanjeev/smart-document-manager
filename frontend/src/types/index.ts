@@ -1,5 +1,3 @@
-// Core types and interfaces for the AI Document Vault
-
 export interface DocumentType {
   id: string;
   name: string;

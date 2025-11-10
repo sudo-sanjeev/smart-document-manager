@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 import { useFolderStore } from '../../../store/folderStore';
 import type { FolderType } from '../../../types';
 
-/**
- * Custom hook to build and manage folder tree structure
- */
 export const useFolderTree = () => {
   const folders = useFolderStore((state) => state.folders);
 
