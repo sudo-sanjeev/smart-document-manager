@@ -85,9 +85,9 @@ Open **http://localhost:5173** in your browser
 
 ---
 
-## Demo Video
+## Demo
 
-🎥 [Watch Demo Video](./ai-doc-manager-demo.gif)
+![Demo](./ai-doc-manager-demo.gif)
 
 ---
 
@@ -99,15 +99,20 @@ case-study/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── store/
-│   │   └── services/
-│   └── README.md
+│   │   ├── services/
+│   │   └── types/
+│   ├── package.json
+│   └── vite.config.ts
 │
 ├── backend/           # Express API
 │   ├── src/
 │   │   ├── controllers/
 │   │   ├── routes/
+│   │   ├── middleware/
 │   │   └── utils/
-│   └── README.md
+│   ├── data/
+│   ├── uploads/
+│   └── package.json
 │
 └── README.md
 ```
