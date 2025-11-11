@@ -87,7 +87,7 @@ Open **http://localhost:5173** in your browser
 
 ## Demo Video
 
-🎥 [Watch Demo Video](./ai-vault-demo.mov)
+🎥 [Watch Demo Video](./ai-doc-manager-demo.gif)
 
 ---
 
