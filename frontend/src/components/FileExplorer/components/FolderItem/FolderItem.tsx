@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { 
   Folder, 
   ChevronRight, 
@@ -7,8 +6,9 @@ import {
   MoreVertical,
   Trash2
 } from 'lucide-react';
-import type { FolderType, DocumentType } from '../../../types';
-import { FileItem } from './FileItem';
+import type { FolderType, DocumentType } from '../../../../types';
+import { FileItem } from '../FileItem/FileItem';
+import { useContextMenu } from '../../hooks/useContextMenu';
 import './FolderItem.css';
 
 interface FolderItemProps {
@@ -40,17 +40,7 @@ export const FolderItem = ({
   onDocumentClick,
   onDocumentDelete,
 }: FolderItemProps) => {
-  const [showMenu, setShowMenu] = useState(false);
-
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowMenu(!showMenu);
-  };
-
-  const handleMenuAction = (action: () => void) => {
-    setShowMenu(false);
-    action();
-  };
+  const { showMenu, handleMenuClick, handleMenuAction, closeMenu } = useContextMenu();
 
   return (
     <div className="folder-item">
@@ -96,7 +86,7 @@ export const FolderItem = ({
               <>
                 <div 
                   className="menu-backdrop" 
-                  onClick={() => setShowMenu(false)} 
+                  onClick={closeMenu} 
                 />
                 <div className="context-menu">
                   <button

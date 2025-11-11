@@ -194,8 +194,10 @@
   font-weight: 600;
 }
 
-.root-documents {
+.root-documents,
+.orphaned-documents {
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Scrollbar styling */
