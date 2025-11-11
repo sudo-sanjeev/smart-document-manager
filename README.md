@@ -87,9 +87,7 @@ Open **http://localhost:5173** in your browser
 
 ## Demo Video
 
-🎥 [Watch Demo Video](#)
-
-_Add your demo video link here_
+🎥 [Watch Demo Video](./ai-vault-demo.mov)
 
 ---
 
