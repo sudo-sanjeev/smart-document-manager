@@ -35,23 +35,30 @@ export const FolderTree = ({
     const isExpanded = expandedFolders.has(folder.id);
     const isSelected = selectedFolderId === folder.id;
     const folderDocs = documents.filter((doc) => doc.folderId === folder.id);
+    const subFolders = folder.children || [];
 
     return (
-      <FolderItem
-        key={folder.id}
-        folder={folder}
-        level={level}
-        documents={folderDocs}
-        isExpanded={isExpanded}
-        isSelected={isSelected}
-        selectedDocumentId={selectedDocumentId}
-        onToggle={() => onToggleFolder(folder.id)}
-        onSelect={() => onSelectFolder(folder.id)}
-        onCreateSubfolder={() => onCreateSubfolder(folder.id)}
-        onDelete={() => onDeleteFolder(folder.id)}
-        onDocumentClick={onDocumentClick}
-        onDocumentDelete={onDocumentDelete}
-      />
+      <div key={folder.id}>
+        <FolderItem
+          folder={folder}
+          level={level}
+          documents={folderDocs}
+          isExpanded={isExpanded}
+          isSelected={isSelected}
+          selectedDocumentId={selectedDocumentId}
+          onToggle={() => onToggleFolder(folder.id)}
+          onSelect={() => onSelectFolder(folder.id)}
+          onCreateSubfolder={() => onCreateSubfolder(folder.id)}
+          onDelete={() => onDeleteFolder(folder.id)}
+          onDocumentClick={onDocumentClick}
+          onDocumentDelete={onDocumentDelete}
+        />
+        {isExpanded && subFolders.length > 0 && (
+          <div>
+            {subFolders.map((subFolder) => renderFolder(subFolder, level + 1))}
+          </div>
+        )}
+      </div>
     );
   };
 
