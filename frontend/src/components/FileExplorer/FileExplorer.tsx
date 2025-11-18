@@ -6,6 +6,7 @@ import { useFolderTree } from './hooks/useFolderTree';
 import { documentService } from '../../services/documentService';
 import { CreateFolderDialog } from './components/CreateFolderDialog/CreateFolderDialog';
 import { FolderTree } from './components/FolderTree/FolderTree';
+import logger from '../../utils/logger';
 import './styles.css';
 
 export const FileExplorer = () => {
@@ -63,7 +64,8 @@ export const FileExplorer = () => {
       );
       closeDialog();
     } catch (error) {
-      console.error('Failed to create folder:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error(`Failed to create folder: ${errorMessage}`);
     }
   };
 
@@ -74,7 +76,8 @@ export const FileExplorer = () => {
         setSelectedFolder(null);
       }
     } catch (error) {
-      console.error('Failed to delete folder:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error(`Failed to delete folder: ${errorMessage}`);
     }
   };
 
@@ -82,7 +85,8 @@ export const FileExplorer = () => {
     try {
       await documentService.deleteDocument(documentId);
     } catch (error) {
-      console.error('Failed to delete document:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error(`Failed to delete document: ${errorMessage}`);
     }
   };
 

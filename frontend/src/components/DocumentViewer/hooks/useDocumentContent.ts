@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { documentService } from '../../../services/documentService';
+import logger from '../../../utils/logger';
 import type { DocumentType } from '../../../types';
 
 interface DocumentContent {
@@ -42,7 +43,8 @@ export const useDocumentContent = (document: DocumentType | null, shouldLoad: bo
           setBlobUrl(null);
         }
       } catch (err) {
-        console.error('Error loading document content:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        logger.error(`Error loading document content: ${errorMessage}`);
         setError('Error loading document content.');
         setContent('');
         setBlobUrl(null);

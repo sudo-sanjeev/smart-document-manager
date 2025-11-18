@@ -5,6 +5,7 @@ import { useFolderStore } from '../store/folderStore';
 import { useUploadStore } from '../store/uploadStore';
 import { useUIStore } from '../store/uiStore';
 import { toast } from '../store/toastStore';
+import logger from '../utils/logger';
 
 
 export const documentService = {
@@ -27,7 +28,7 @@ export const documentService = {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data';
       toast.error(errorMessage);
-      console.error('Error loading data:', err);
+      logger.error(`Error loading data: ${errorMessage}`);
       throw err;
     } finally {
       setLoading(false);
@@ -130,7 +131,8 @@ export const documentService = {
           clearInterval(poll);
         }
       } catch (err) {
-        console.error('Error polling document status:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        logger.error(`Error polling document status: ${errorMessage}`);
         clearInterval(poll);
       }
     }, 2000);

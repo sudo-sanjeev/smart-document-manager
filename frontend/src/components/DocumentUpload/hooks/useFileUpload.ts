@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useUploadStore } from '../../../store/uploadStore';
 import { useUIStore } from '../../../store/uiStore';
 import { documentService } from '../../../services/documentService';
+import logger from '../../../utils/logger';
 
 export const useFileUpload = () => {
   const uploadProgress = useUploadStore((state) => state.uploadProgress);
@@ -14,7 +15,8 @@ export const useFileUpload = () => {
       try {
         await documentService.uploadFiles(files, selectedFolderId || undefined);
       } catch (error) {
-        console.error('Upload error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        logger.error(`Upload error: ${errorMessage}`);
         throw error;
       }
     },
