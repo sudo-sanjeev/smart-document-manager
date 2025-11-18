@@ -4,6 +4,7 @@ import { useDocumentStore } from '../store/documentStore';
 import { useFolderStore } from '../store/folderStore';
 import { useUploadStore } from '../store/uploadStore';
 import { useUIStore } from '../store/uiStore';
+import { toast } from '../store/toastStore';
 
 
 export const documentService = {
@@ -12,11 +13,9 @@ export const documentService = {
     const setDocuments = useDocumentStore.getState().setDocuments;
     const setFolders = useFolderStore.getState().setFolders;
     const setLoading = useUIStore.getState().setLoading;
-    const setError = useUIStore.getState().setError;
 
     try {
       setLoading(true);
-      setError(null);
 
       const [docs, folds] = await Promise.all([
         documentAPI.getAllDocuments(),
@@ -27,7 +26,7 @@ export const documentService = {
       setFolders(folds);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data';
-      setError(errorMessage);
+      toast.error(errorMessage);
       console.error('Error loading data:', err);
       throw err;
     } finally {
@@ -41,7 +40,6 @@ export const documentService = {
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
 
     try {
-      // Create upload progress entries with unique IDs
       const fileIdMap = new Map<string, string>();
       files.forEach((file) => {
         const id = `${file.name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -69,7 +67,7 @@ export const documentService = {
       uploadedDocs.forEach((doc) => {
         const id = fileIdMap.get(doc.name);
         if (id) {
-          documentService.pollDocumentStatus(doc.id, id);
+          documentService.pollDocumentStatus(doc.id, id, doc.name);
         }
       });
 
@@ -77,6 +75,9 @@ export const documentService = {
 
       return uploadedDocs;
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
+      toast.error(errorMessage);
+      
       files.forEach((file) => {
         updateUploadProgress(file.name, {
           status: 'failed',
@@ -87,7 +88,7 @@ export const documentService = {
     }
   },
 
-  pollDocumentStatus: async (docId: string, uploadProgressId: string) => {
+  pollDocumentStatus: async (docId: string, uploadProgressId: string, fileName: string) => {
     const updateDocument = useDocumentStore.getState().updateDocument;
     const updateUploadProgress = useUploadStore.getState().updateUploadProgress;
     const removeUploadProgress = useUploadStore.getState().removeUploadProgress;
@@ -107,6 +108,8 @@ export const documentService = {
           });
           updateDocument(docId, doc);
           clearInterval(poll);
+          
+          toast.success(`${fileName} processed successfully`);
 
           setTimeout(() => {
             removeUploadProgress(uploadProgressId);
@@ -116,12 +119,14 @@ export const documentService = {
             status: 'failed',
             error: 'AI processing failed',
           });
+          toast.error(`${fileName} processing failed`);
           clearInterval(poll);
         } else if (attempts >= maxAttempts) {
           updateUploadProgress(uploadProgressId, {
             status: 'failed',
             error: 'Processing timeout',
           });
+          toast.error(`${fileName} processing timed out`);
           clearInterval(poll);
         }
       } catch (err) {
@@ -133,31 +138,31 @@ export const documentService = {
 
   createFolder: async (name: string, parentId?: string) => {
     const addFolder = useFolderStore.getState().addFolder;
-    const setError = useUIStore.getState().setError;
 
     try {
       const folder = await folderAPI.createFolder(name, parentId);
       addFolder(folder);
+      toast.success(`Folder "${name}" created successfully`);
       return folder;
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to create folder';
-      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     }
   },
 
   deleteFolder: async (id: string) => {
     const removeFolder = useFolderStore.getState().removeFolder;
-    const setError = useUIStore.getState().setError;
 
     try {
       await folderAPI.deleteFolder(id);
       removeFolder(id);
+      toast.success('Folder deleted successfully');
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to delete folder';
-      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     }
   },
@@ -166,7 +171,6 @@ export const documentService = {
     const removeDocument = useDocumentStore.getState().removeDocument;
     const setSelectedDocument = useUIStore.getState().setSelectedDocument;
     const selectedDocumentId = useUIStore.getState().selectedDocumentId;
-    const setError = useUIStore.getState().setError;
 
     try {
       await documentAPI.deleteDocument(id);
@@ -174,10 +178,11 @@ export const documentService = {
       if (selectedDocumentId === id) {
         setSelectedDocument(null);
       }
+      toast.success('Document deleted successfully');
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to delete document';
-      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     }
   },

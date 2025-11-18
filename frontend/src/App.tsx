@@ -3,13 +3,11 @@ import { FileText } from 'lucide-react';
 import { DocumentUpload } from './components/DocumentUpload/DocumentUpload';
 import { FileExplorer } from './components/FileExplorer/FileExplorer';
 import { DocumentViewer } from './components/DocumentViewer/DocumentViewer';
-import { useUIStore } from './store/uiStore';
+import { ToastContainer } from './components/Toast/ToastContainer';
 import { documentService } from './services/documentService';
 import './App.css';
 
 function App() {
-  const error = useUIStore((state) => state.error);
-
   useEffect(() => {
     documentService.loadData();
   }, []);
@@ -29,12 +27,6 @@ function App() {
               <DocumentUpload />
             </div>
 
-            {error && (
-              <div className="error-banner">
-                <strong>Error:</strong> {error}
-              </div>
-            )}
-
             <div className="vault-main">
               <div className="sidebar">
                 <FileExplorer />
@@ -46,6 +38,7 @@ function App() {
           </div>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }
